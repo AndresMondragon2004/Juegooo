@@ -17,6 +17,8 @@ interface DestructionEffect {
   alpha: number;
   color: number;
   active: boolean;
+  duration?: number;
+  age?: number;
 }
 
 export class MissileRenderer {
@@ -149,6 +151,11 @@ export class MissileRenderer {
   /**
    * Triggers a discrete burnout/disintegration effect when fuel is exhausted.
    */
+  public triggerMutualImpact(x: number, y: number, duration: number): void {
+    this.currentEffect = { x, y, radius: 4, maxRadius: 38, alpha: 1,
+      color: 0xfbbf24, active: true, duration: Math.max(0.001, duration), age: 0 };
+  }
+
   public triggerBurnout(x: number, y: number): void {
     this.currentEffect = {
       x,
@@ -186,7 +193,7 @@ export class MissileRenderer {
         this.sprite.setScale(1.0);
       } else if (missile.isDestroying) {
         // Disintegration fade
-        const progress = Math.max(0, missile.destroyingRemaining / 0.45);
+        const progress = Math.max(0, missile.destroyingRemaining / Math.max(0.001, missile.destructionDuration));
         this.sprite.setAlpha(progress * 0.8);
         this.sprite.setScale(0.4 + progress * 0.6);
       }
@@ -234,7 +241,21 @@ export class MissileRenderer {
     if (this.currentEffect && this.currentEffect.active) {
       const eff = this.currentEffect;
       eff.radius += (eff.maxRadius - eff.radius) * Math.min(1, 14 * dt);
-      eff.alpha -= dt * 2.2;
+      if (eff.duration !== undefined) {
+        eff.age = (eff.age ?? 0) + dt;
+        eff.alpha = Math.max(0, 1 - eff.age / eff.duration);
+        const progress = Math.min(1, eff.age / eff.duration);
+        for (let i = 0; i < 8; i++) {
+          const angle = i * Math.PI / 4;
+          this.effectGraphics.fillStyle(i % 2 ? 0xf97316 : 0xfde047, eff.alpha);
+          this.effectGraphics.fillCircle(eff.x + Math.cos(angle) * 46 * progress,
+            eff.y + Math.sin(angle) * 46 * progress, 2 * eff.alpha);
+        }
+        if (progress < 0.25) {
+          this.effectGraphics.fillStyle(0xffffff, 1 - progress * 4);
+          this.effectGraphics.fillCircle(eff.x, eff.y, 10);
+        }
+      } else eff.alpha -= dt * 2.2;
 
       if (eff.alpha > 0.01) {
         this.effectGraphics.lineStyle(2, eff.color, eff.alpha);
@@ -249,6 +270,8 @@ export class MissileRenderer {
   }
 
   public destroy(): void {
+    this.currentEffect = null;
+    this.smokePoints = [];
     this.container.destroy();
     this.trailGraphics.destroy();
     this.effectGraphics.destroy();

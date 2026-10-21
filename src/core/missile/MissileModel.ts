@@ -190,12 +190,15 @@ export class MissileModel {
   /**
    * Triggers collision impact: immediately enters DESTROYING state.
    */
-  public impact(): void {
-    if (this.canCollide) {
+  public impact(position?: { x: number; y: number }, beforeExpiry = false): void {
+    if (this.canCollide || (beforeExpiry && this.isDestroying)) {
+      if (position) { this._x = position.x; this._y = position.y; }
       this._state = 'DESTROYING';
       this._destroyingRemaining = this._config.destroyingDuration;
     }
   }
+
+  public get destructionDuration(): number { return this._config.destroyingDuration; }
 
   /**
    * Retires the missile directly (e.g. when completely off-screen beyond max distance).
