@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Sky Evasion Arcade - Prototipo Fase 0A</title>
+  <title>Sky Evasion — Arcade</title>
   <style>
     * {
       box-sizing: border-box;
@@ -34,43 +34,10 @@
       display: block;
       touch-action: none;
     }
-    #controls-hint {
-      position: absolute;
-      bottom: 16px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 9999px;
-      padding: 8px 18px;
-      color: #e2e8f0;
-      font-size: 13px;
-      letter-spacing: 0.02em;
-      pointer-events: none;
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      transition: opacity 0.5s ease;
-    }
-    .badge {
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 2px 7px;
-      border-radius: 4px;
-      font-weight: 600;
-      font-size: 11px;
-    }
   </style>
 </head>
 <body>
   <div id="game-container"></div>
-  <div id="controls-hint">
-    <span>💻 <span class="badge">A</span> / <span class="badge">D</span> o <span class="badge">←</span> / <span class="badge">→</span></span>
-    <span>📱 <span class="badge">Tocar / Arrastrar</span></span>
-  </div>
   <script type="module" src="/src/main.ts"></script>
 </body>
 </html>

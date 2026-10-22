@@ -37,7 +37,19 @@ export interface MissilesCollidedEvent {
   type: 'mutual';
 }
 
+export interface AirplaneHitEvent {
+  missileId: string;
+  x: number;
+  y: number;
+  planeX: number;
+  planeY: number;
+  simulationTime: number;
+  fraction: number;
+  type: 'airplane';
+}
+
 export class MissileManager {
+  private stopped = false;
   private scene: Phaser.Scene;
   private entries: MissileEntry[] = [];
   private spawnCooldownTimer: number;
@@ -66,7 +78,7 @@ export class MissileManager {
     viewport: CameraViewportBounds,
     previousPlayerPos = playerPos
   ): void {
-    if (dt <= 0) return;
+    if (dt <= 0 || this.stopped) return;
     this.elapsedTime += dt;
 
     // 1. Retire missiles that have completed their lifecycle or are ineffective
@@ -106,7 +118,22 @@ export class MissileManager {
       ...playerPos, previousX: previousPlayerPos.x, previousY: previousPlayerPos.y,
       radius: this.config.airplaneCollisionRadius,
     });
-    for (const contact of contacts) this.resolveContact(contact, dt);
+    for (const contact of contacts) {
+      this.resolveContact(contact, dt);
+      if (contact.type === 'airplane') {
+        const event: AirplaneHitEvent = {
+          missileId: contact.ids[0], x: contact.x, y: contact.y,
+          planeX: previousPlayerPos.x + (playerPos.x - previousPlayerPos.x) * contact.fraction,
+          planeY: previousPlayerPos.y + (playerPos.y - previousPlayerPos.y) * contact.fraction,
+          simulationTime: this.elapsedTime - dt + contact.fraction * dt,
+          fraction: contact.fraction, type: 'airplane',
+        };
+        this.stopped = true;
+        this.elapsedTime = event.simulationTime;
+        this.scene.events.emit('airplaneHit', event);
+        break; // No rewards or impacts after the fatal contact, including later ties.
+      }
+    }
     for (const entry of this.entries) entry.renderer.update(entry.model, dt);
   }
 
@@ -123,6 +150,13 @@ export class MissileManager {
     } else {
       entries[0].renderer.triggerImpact(contact.x, contact.y);
     }
+  }
+
+  public get simulationTime(): number { return this.elapsedTime; }
+
+  /** Only cosmetics advance after death; no motion, spawning or collisions. */
+  public updateEffects(dt: number): void {
+    for (const entry of this.entries) entry.renderer.updateEffects(dt);
   }
 
   /** Live entries iterator for collision detection in GameScene. */

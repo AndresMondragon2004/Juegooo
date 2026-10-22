@@ -222,6 +222,10 @@ export class MissileRenderer {
       this.container.setVisible(false);
     }
 
+    this.updateEffects(dt);
+  }
+
+  public updateEffects(dt: number): void {
     // 3. Render smoke trail
     this.trailGraphics.clear();
     for (let i = 0; i < this.smokePoints.length; i++) {

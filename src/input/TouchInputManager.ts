@@ -8,6 +8,8 @@ export class TouchInputManager implements IInputManager {
   private pointerScreenX: number = 0;
   private pointerScreenY: number = 0;
 
+  private readonly preventCanvasGesture = (event: Event): void => event.preventDefault();
+
   constructor(scene: Phaser.Scene, deadzone: number = 24) {
     this.scene = scene;
     this.deadzone = deadzone;
@@ -15,9 +17,9 @@ export class TouchInputManager implements IInputManager {
     // Prevent default context menu or drag gestures on canvas
     const canvas = this.scene.game.canvas;
     if (canvas) {
-      canvas.addEventListener('contextmenu', (e) => e.preventDefault());
-      canvas.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
-      canvas.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+      canvas.addEventListener('contextmenu', this.preventCanvasGesture);
+      canvas.addEventListener('touchstart', this.preventCanvasGesture, { passive: false });
+      canvas.addEventListener('touchmove', this.preventCanvasGesture, { passive: false });
     }
 
     this.scene.input.on('pointerdown', this.onPointerDown, this);
@@ -78,6 +80,11 @@ export class TouchInputManager implements IInputManager {
   }
 
   public destroy(): void {
+    this.isPointerDown = false;
+    const canvas = this.scene.game.canvas;
+    canvas?.removeEventListener('contextmenu', this.preventCanvasGesture);
+    canvas?.removeEventListener('touchstart', this.preventCanvasGesture);
+    canvas?.removeEventListener('touchmove', this.preventCanvasGesture);
     this.scene.input.off('pointerdown', this.onPointerDown, this);
     this.scene.input.off('pointermove', this.onPointerMove, this);
     this.scene.input.off('pointerup', this.onPointerUp, this);

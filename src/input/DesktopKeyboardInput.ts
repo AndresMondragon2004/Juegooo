@@ -2,12 +2,14 @@ import Phaser from 'phaser';
 import { IInputManager, SteerCommand } from './IInputManager';
 
 export class DesktopKeyboardInput implements IInputManager {
+  private keyboard?: Phaser.Input.Keyboard.KeyboardPlugin;
   private keyA?: Phaser.Input.Keyboard.Key;
   private keyD?: Phaser.Input.Keyboard.Key;
   private keyLeft?: Phaser.Input.Keyboard.Key;
   private keyRight?: Phaser.Input.Keyboard.Key;
 
   constructor(scene: Phaser.Scene) {
+    this.keyboard = scene.input.keyboard ?? undefined;
     if (scene.input.keyboard) {
       this.keyA = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
       this.keyD = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -30,9 +32,9 @@ export class DesktopKeyboardInput implements IInputManager {
   }
 
   public destroy(): void {
-    this.keyA?.destroy();
-    this.keyD?.destroy();
-    this.keyLeft?.destroy();
-    this.keyRight?.destroy();
+    for (const key of [this.keyA, this.keyD, this.keyLeft, this.keyRight]) {
+      if (key) this.keyboard?.removeKey(key, true, true);
+    }
+    this.keyA = this.keyD = this.keyLeft = this.keyRight = undefined;
   }
 }

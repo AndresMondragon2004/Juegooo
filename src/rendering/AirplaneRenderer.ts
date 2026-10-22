@@ -181,6 +181,12 @@ export class AirplaneRenderer {
     }
   }
 
+  public hide(): void {
+    this.container.setVisible(false);
+    this.trailGraphics.clear();
+    this.touchReticle.clear();
+  }
+
   public destroy(): void {
     this.container.destroy();
     this.trailGraphics.destroy();

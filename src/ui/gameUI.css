@@ -1,0 +1,45 @@
+﻿.game-ui { position:absolute; inset:0; z-index:20; pointer-events:none; color:#f8fafc; font-variant-numeric:tabular-nums; }
+.game-ui [hidden] { display:none !important; }
+.game-ui button { font:inherit; cursor:pointer; touch-action:manipulation; border:0; min-height:48px; }
+.game-ui button:focus-visible { outline:3px solid #fff; outline-offset:4px; }
+.flight-hud { position:absolute; top:max(12px, env(safe-area-inset-top)); left:max(12px, env(safe-area-inset-left)); right:max(12px, env(safe-area-inset-right)); display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+.hud-readout { display:flex; gap:24px; padding:10px 16px; border:1px solid #ffffff25; border-radius:14px; background:#0b192ce8; }
+.hud-readout span { font-size:10px; letter-spacing:.12em; color:#b9d4f3; display:grid; gap:3px; }
+.hud-readout b { font-size:22px; line-height:1.1; letter-spacing:.02em; color:#fff; }
+.pause-button { pointer-events:auto; width:48px; border-radius:14px; background:#0b192ce8; color:#fff; font-size:24px !important; }
+.round-overlay { pointer-events:auto; position:absolute; inset:0; display:flex; justify-content:center; align-items:center; padding:max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); background:linear-gradient(160deg,#081526db,#123360b8); overflow:auto; touch-action:pan-y; }
+.round-card { width:min(100%,440px); max-height:100%; overflow:auto; text-align:center; padding:28px; border:1px solid #93c5fd35; border-radius:24px; background:linear-gradient(155deg,#142d4ef5,#0a182cf5); box-shadow:0 20px 70px #0005; touch-action:pan-y; }
+.flight-mark { color:#fbbf24; font-size:44px; line-height:1; margin-bottom:14px; }
+.eyebrow { font-size:10px; letter-spacing:.2em; font-weight:700; color:#93c5fd; margin-bottom:10px; }
+.round-card h1 { font-size:clamp(26px,7vw,36px); letter-spacing:.025em; line-height:1.1; }
+.round-description { font-size:16px; color:#c2d3e9; line-height:1.5; margin:14px auto 22px; max-width:320px; }
+.primary-button { width:100%; padding:14px 20px; border-radius:12px; color:#182337; background:#fbbf24; font-weight:800 !important; font-size:18px !important; box-shadow:0 4px 0 #a66c12; }
+.primary-button:hover { background:#fcd34d; }
+.control-guide { font-size:13px; color:#c2d3e9; line-height:1.7; margin-top:22px; }
+.menu-record { margin-top:16px; font-size:14px; color:#93c5fd; }
+.round-stats { margin-bottom:24px; }
+.total-score { display:grid; gap:4px; margin-bottom:18px; }
+.total-score span { font-size:10px; letter-spacing:.18em; color:#93c5fd; }
+.total-score strong { font-size:48px; line-height:1.1; color:#fcd34d; }
+.round-stats dl { display:grid; grid-template-columns:1fr 1fr; gap:10px; text-align:left; }
+.round-stats dl div { border-radius:10px; background:#ffffff08; padding:12px; }
+.round-stats dt { font-size:12px; color:#b9cce3; margin-bottom:4px; }
+.round-stats dd { font-size:20px; font-weight:700; }
+.record-badge { margin-top:14px; color:#fcd34d; font-size:13px; font-weight:800; letter-spacing:.1em; }
+@media (max-height:500px) and (min-width:540px) {
+  .round-card { width:min(100%,700px); padding:18px 24px; display:grid; grid-template-columns:1fr 1fr; column-gap:28px; align-items:center; }
+  .flight-mark { display:none; }
+  .eyebrow,.round-card h1,.round-description { grid-column:1; }
+  .round-description { margin:10px 0; font-size:14px; }
+  .primary-button { grid-column:2; grid-row:2; }
+  .control-guide { grid-column:2; grid-row:3; margin-top:10px; }
+  .menu-record { grid-column:1; }
+  [data-screen="GAME_OVER"] .round-stats { grid-column:2; grid-row:1 / 5; margin:0; }
+  [data-screen="GAME_OVER"] .primary-button { grid-column:1; grid-row:4; }
+  .total-score strong { font-size:36px; }
+  .total-score { margin-bottom:8px; }
+  .round-stats dl { gap:6px; }
+  .round-stats dl div { padding:8px; }
+  .round-stats dd { font-size:18px; }
+}
+@media (max-width:360px) { .round-card { padding:20px; } .hud-readout { gap:16px; padding:10px 12px; } }
